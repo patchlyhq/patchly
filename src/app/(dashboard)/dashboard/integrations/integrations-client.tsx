@@ -1,15 +1,7 @@
 'use client';
-import {
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Copy,
-  Eye,
-  EyeOff,
-  Loader2,
-  RefreshCw,
-} from 'lucide-react';
-import { useState } from 'react';
+import { ChevronDown, ChevronRight, GitBranch, Loader2, Unlink } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 type ProjectRow = {
@@ -17,9 +9,9 @@ type ProjectRow = {
   slug: string;
   name: string;
   githubWebhookSecret: string | null;
+  githubRepoOwner: string | null;
+  githubRepoName: string | null;
 };
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://patchly.dawit.dev';
 
 const COMING_SOON = [
   { id: 'zapier', name: 'Zapier', letter: 'Z', description: 'Trigger Zaps when you publish a new changelog entry.' },
@@ -27,48 +19,77 @@ const COMING_SOON = [
   { id: 'discord', name: 'Discord', letter: 'D', description: 'Announce releases in your Discord server automatically.' },
 ];
 
-export function IntegrationsClient({ projects }: { projects: ProjectRow[] }) {
+export function IntegrationsClient({ projects: initial }: { projects: ProjectRow[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [githubOpen, setGithubOpen] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState(projects[0]?.id ?? '');
-  const [secrets, setSecrets] = useState<Record<string, string>>(() =>
-    Object.fromEntries(projects.filter((p) => p.githubWebhookSecret).map((p) => [p.id, p.githubWebhookSecret!]))
-  );
-  const [revealed, setRevealed] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [copied, setCopied] = useState<'url' | 'secret' | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(initial[0]?.id ?? '');
+  const [repo, setRepo] = useState('');
+  const [projects, setProjects] = useState(initial);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
-  const secret = selectedProjectId ? secrets[selectedProjectId] : null;
-  const webhookUrl = selectedProject
-    ? `${APP_URL}/api/integrations/github/webhook?project=${selectedProject.slug}`
-    : '';
+  const isConnected = !!(selectedProject?.githubRepoOwner && selectedProject?.githubRepoName);
 
-  const copyText = async (text: string, kind: 'url' | 'secret') => {
-    await navigator.clipboard.writeText(text);
-    setCopied(kind);
-    setTimeout(() => setCopied(null), 2000);
+  // Handle OAuth return params
+  useEffect(() => {
+    const status = searchParams.get('github');
+    if (!status) return;
+    if (status === 'connected') {
+      setGithubOpen(true);
+      toast.success('GitHub connected — releases will create draft entries automatically.');
+      router.replace('/dashboard/integrations');
+      router.refresh();
+    } else if (status === 'webhook_error') {
+      setGithubOpen(true);
+      toast.error('GitHub OAuth succeeded but webhook creation failed. Check that the repo exists and you have admin access.');
+      router.replace('/dashboard/integrations');
+    } else if (status === 'error') {
+      setGithubOpen(true);
+      toast.error('GitHub connection failed. Try again.');
+      router.replace('/dashboard/integrations');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleConnect = () => {
+    const trimmed = repo.trim();
+    if (!trimmed || !trimmed.includes('/')) {
+      toast.error('Enter a repo in owner/name format, e.g. acme/my-app');
+      return;
+    }
+    const url = `/api/integrations/github/connect?projectId=${encodeURIComponent(selectedProjectId)}&repo=${encodeURIComponent(trimmed)}`;
+    window.location.href = url;
   };
 
-  const generateSecret = async () => {
+  const handleDisconnect = async () => {
     if (!selectedProjectId) return;
-    setGenerating(true);
+    setDisconnecting(true);
     try {
-      const res = await fetch('/api/integrations/github', {
+      const res = await fetch('/api/integrations/github/disconnect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectId: selectedProjectId }),
       });
       if (!res.ok) throw new Error('Failed');
-      const { secret: newSecret } = await res.json() as { secret: string };
-      setSecrets((prev) => ({ ...prev, [selectedProjectId]: newSecret }));
-      setRevealed(true);
-      toast.success('Webhook secret generated');
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === selectedProjectId
+            ? { ...p, githubRepoOwner: null, githubRepoName: null, githubWebhookSecret: null }
+            : p
+        )
+      );
+      setRepo('');
+      toast.success('GitHub disconnected');
+      router.refresh();
     } catch {
-      toast.error('Failed to generate secret');
+      toast.error('Failed to disconnect');
     } finally {
-      setGenerating(false);
+      setDisconnecting(false);
     }
   };
+
+  const connectedCount = projects.filter((p) => p.githubRepoOwner).length;
 
   return (
     <div className="space-y-10">
@@ -87,16 +108,14 @@ export function IntegrationsClient({ projects }: { projects: ProjectRow[] }) {
               </div>
               <div>
                 <p className="text-sm font-semibold text-black/80">GitHub</p>
-                <p className="text-xs text-black/40">
-                  Auto-create draft entries from GitHub releases
-                </p>
+                <p className="text-xs text-black/40">Auto-create draft entries from GitHub releases</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {Object.keys(secrets).length > 0 && (
+              {connectedCount > 0 && (
                 <span className="flex items-center gap-1.5 text-[11px] text-black/40">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  {Object.keys(secrets).length} project{Object.keys(secrets).length !== 1 ? 's' : ''} connected
+                  {connectedCount} project{connectedCount !== 1 ? 's' : ''} connected
                 </span>
               )}
               {githubOpen ? (
@@ -118,98 +137,75 @@ export function IntegrationsClient({ projects }: { projects: ProjectRow[] }) {
                     <label className="mb-1.5 block text-xs font-medium text-black/55">Project</label>
                     <select
                       value={selectedProjectId}
-                      onChange={(e) => { setSelectedProjectId(e.target.value); setRevealed(false); }}
+                      onChange={(e) => {
+                        setSelectedProjectId(e.target.value);
+                        setRepo('');
+                      }}
                       className="w-full rounded-lg border border-black/10 bg-[oklch(98%_0_0)] px-3.5 py-2.5 text-sm text-black/80 outline-none focus:border-black/25 focus:bg-white transition-colors"
                     >
                       {projects.map((p) => (
-                        <option key={p.id} value={p.id}>{p.name} (/{p.slug})</option>
+                        <option key={p.id} value={p.id}>{p.name}</option>
                       ))}
                     </select>
                   </div>
 
-                  {/* Webhook URL */}
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-black/55">Webhook URL</label>
-                    <div className="flex items-center gap-2">
-                      <code className="flex-1 truncate rounded-lg border border-black/8 bg-[oklch(98%_0_0)] px-3.5 py-2.5 font-mono text-xs text-black/55">
-                        {webhookUrl}
-                      </code>
+                  {isConnected ? (
+                    /* Connected state */
+                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <GitBranch size={16} className="shrink-0 text-emerald-600 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-semibold text-emerald-900">
+                            {selectedProject?.githubRepoOwner}/{selectedProject?.githubRepoName}
+                          </p>
+                          <p className="text-xs text-emerald-700 mt-0.5">
+                            New GitHub releases will create draft changelog entries automatically.
+                          </p>
+                        </div>
+                      </div>
                       <button
                         type="button"
-                        onClick={() => copyText(webhookUrl, 'url')}
-                        className="flex shrink-0 items-center gap-1.5 rounded-lg border border-black/10 px-3 py-2.5 text-xs text-black/45 transition-colors hover:bg-black/4 hover:text-black/65"
+                        onClick={handleDisconnect}
+                        disabled={disconnecting}
+                        className="flex shrink-0 items-center gap-1.5 rounded-lg border border-black/10 px-3 py-2 text-xs text-black/45 transition-colors hover:bg-black/4 hover:text-black/65 disabled:opacity-40"
                       >
-                        {copied === 'url' ? <Check size={11} /> : <Copy size={11} />}
-                        {copied === 'url' ? 'Copied' : 'Copy'}
+                        {disconnecting ? <Loader2 size={11} className="animate-spin" /> : <Unlink size={11} />}
+                        Disconnect
                       </button>
                     </div>
-                  </div>
-
-                  {/* Webhook secret */}
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-black/55">Webhook secret</label>
-                    {secret ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-1 items-center gap-3 rounded-lg border border-black/8 bg-[oklch(98%_0_0)] px-3.5 py-2.5">
-                            <code className="flex-1 truncate font-mono text-xs text-black/55">
-                              {revealed ? secret : '•'.repeat(48)}
-                            </code>
-                            <button
-                              type="button"
-                              onClick={() => setRevealed((r) => !r)}
-                              className="shrink-0 text-black/25 transition-colors hover:text-black/55"
-                            >
-                              {revealed ? <EyeOff size={13} /> : <Eye size={13} />}
-                            </button>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => copyText(secret, 'secret')}
-                            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-black/10 px-3 py-2.5 text-xs text-black/45 transition-colors hover:bg-black/4 hover:text-black/65"
-                          >
-                            {copied === 'secret' ? <Check size={11} /> : <Copy size={11} />}
-                            {copied === 'secret' ? 'Copied' : 'Copy'}
-                          </button>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={generateSecret}
-                          disabled={generating}
-                          className="flex items-center gap-1.5 text-xs text-black/30 transition-colors hover:text-black/55 disabled:opacity-40"
-                        >
-                          <RefreshCw size={11} />
-                          Regenerate secret
-                        </button>
+                  ) : (
+                    /* Connect form */
+                    <div className="space-y-4">
+                      <div>
+                        <label className="mb-1.5 block text-xs font-medium text-black/55">GitHub repository</label>
+                        <input
+                          type="text"
+                          placeholder="owner/repository"
+                          value={repo}
+                          onChange={(e) => setRepo(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleConnect()}
+                          className="w-full rounded-lg border border-black/10 bg-[oklch(98%_0_0)] px-3.5 py-2.5 font-mono text-sm text-black/80 placeholder:text-black/30 outline-none focus:border-black/25 focus:bg-white transition-colors"
+                        />
+                        <p className="mt-1.5 text-[11px] text-black/35">e.g. <span className="font-mono">acme/my-app</span></p>
                       </div>
-                    ) : (
+
                       <button
                         type="button"
-                        onClick={generateSecret}
-                        disabled={generating}
-                        className="flex items-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-black/85 disabled:opacity-40"
+                        onClick={handleConnect}
+                        className="flex items-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-black/85"
                       >
-                        {generating && <Loader2 size={13} className="animate-spin" />}
-                        Generate secret
+                        <svg viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4">
+                          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+                        </svg>
+                        Connect with GitHub
                       </button>
-                    )}
-                  </div>
 
-                  {/* Instructions */}
-                  <div className="rounded-lg border border-black/6 bg-[oklch(98.5%_0_0)] p-4 space-y-3">
-                    <p className="text-xs font-semibold text-black/55">Setup in GitHub</p>
-                    <ol className="space-y-2 text-xs text-black/50 list-decimal list-inside">
-                      <li>Go to your GitHub repo → Settings → Webhooks → Add webhook</li>
-                      <li>Paste the Webhook URL above into <span className="font-mono text-black/65">Payload URL</span></li>
-                      <li>Set Content type to <span className="font-mono text-black/65">application/json</span></li>
-                      <li>Paste the secret above into <span className="font-mono text-black/65">Secret</span></li>
-                      <li>Under events, choose <span className="font-medium text-black/65">Let me select individual events</span> → check <span className="font-medium text-black/65">Releases</span></li>
-                      <li>Click <span className="font-medium text-black/65">Add webhook</span></li>
-                    </ol>
-                    <p className="text-xs text-black/35">
-                      Every time you publish a release on GitHub, Patchly will create a draft changelog entry — ready for you to review and publish.
-                    </p>
-                  </div>
+                      <p className="text-xs text-black/35 leading-relaxed">
+                        You&apos;ll authorize Patchly to create a webhook on that repo.
+                        Patchly only requests <span className="font-medium text-black/50">admin:repo_hook</span> scope — nothing else.
+                      </p>
+                    </div>
+                  )}
                 </>
               )}
             </div>

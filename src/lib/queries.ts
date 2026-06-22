@@ -81,11 +81,20 @@ export type ProjectWithSecret = {
   slug: string;
   name: string;
   githubWebhookSecret: string | null;
+  githubRepoOwner: string | null;
+  githubRepoName: string | null;
 };
 
 export async function getProjectsWithSecrets(userId: string): Promise<ProjectWithSecret[]> {
   return db
-    .select({ id: projects.id, slug: projects.slug, name: projects.name, githubWebhookSecret: projects.githubWebhookSecret })
+    .select({
+      id: projects.id,
+      slug: projects.slug,
+      name: projects.name,
+      githubWebhookSecret: projects.githubWebhookSecret,
+      githubRepoOwner: projects.githubRepoOwner,
+      githubRepoName: projects.githubRepoName,
+    })
     .from(projects)
     .where(eq(projects.userId, userId));
 }

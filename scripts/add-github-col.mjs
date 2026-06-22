@@ -111,3 +111,10 @@ console.log('Migration complete — all Better Auth tables created');
 // Additional migration
 await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS github_webhook_secret text`;
 console.log('github_webhook_secret column added');
+
+// OAuth columns
+await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS github_repo_owner text`;
+await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS github_repo_name text`;
+await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS github_access_token text`;
+await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS github_webhook_id text`;
+console.log('github OAuth columns added');
