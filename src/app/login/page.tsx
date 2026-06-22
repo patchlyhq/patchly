@@ -61,7 +61,7 @@ export default function LoginPage() {
         </div>
 
         {!sent ? (
-          <div className="rounded-2xl border border-black/8 bg-white p-8 shadow-sm">
+          <div className="rounded-2xl border border-black/8 bg-white p-5 shadow-sm sm:p-8">
             <div className="space-y-3 mb-6">
               <div>
                 <input
@@ -138,7 +138,7 @@ export default function LoginPage() {
             </button>
           </div>
         ) : (
-          <div className="rounded-2xl border border-black/8 bg-white p-8 shadow-sm text-center">
+          <div className="rounded-2xl border border-black/8 bg-white p-5 text-center shadow-sm sm:p-8">
             <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-black/5">
               <svg
                 width="18"

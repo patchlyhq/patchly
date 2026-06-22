@@ -16,7 +16,7 @@ const PRO_FEATURES = [
 export function UpgradeCard() {
   return (
     <motion.div
-      className="rounded-2xl bg-black p-8 text-white"
+      className="rounded-2xl bg-black p-5 text-white sm:p-8"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}

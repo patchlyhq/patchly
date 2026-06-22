@@ -41,7 +41,7 @@ export function NotificationsTable({
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-black/8">
+      <div className="overflow-x-auto rounded-xl border border-black/8">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-black/8 bg-[oklch(98%_0_0)]">

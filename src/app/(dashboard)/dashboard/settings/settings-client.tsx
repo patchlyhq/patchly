@@ -59,13 +59,13 @@ export function SettingsClient({ projects }: { projects: Project[] }) {
           {projects.map((p) => (
             <div
               key={p.slug}
-              className="flex items-center justify-between rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3"
             >
-              <div>
-                <p className="text-sm font-medium text-black/80">{p.name}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-black/80">{p.name}</p>
                 <p className="text-xs text-black/30">/{p.slug}</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex shrink-0 items-center gap-3">
                 <Link
                   href={`/${p.slug}`}
                   target="_blank"
@@ -128,8 +128,8 @@ export function SettingsClient({ projects }: { projects: Project[] }) {
           </span>
         </div>
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3">
-            <div>
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3">
+            <div className="flex-1 min-w-0">
               <p className="text-sm text-black/70">Show &quot;Powered by Patchly&quot;</p>
               <p className="text-xs text-black/30">Displayed in the footer of your public changelog.</p>
             </div>

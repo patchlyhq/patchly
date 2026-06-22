@@ -135,7 +135,7 @@ export function MobileDashboardNav({ user }: { user: CurrentUser }) {
                   <p className="truncate text-xs font-medium text-black/70">
                     {user.name ?? user.email.split('@')[0]}
                   </p>
-                  <p className="text-[10px] text-black/30">{user.email}</p>
+                  <p className="truncate text-[10px] text-black/30">{user.email}</p>
                 </div>
               </div>
             </div>

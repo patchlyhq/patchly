@@ -24,7 +24,7 @@ export default function AnalyticsPage() {
       <ViewsChartWrapper />
 
       {/* Top entries */}
-      <div className="overflow-hidden rounded-xl border border-black/8">
+      <div className="overflow-x-auto rounded-xl border border-black/8">
         <div className="border-b border-black/8 bg-[oklch(98%_0_0)] px-5 py-3.5">
           <h2 className="text-sm font-semibold text-[var(--color-text)]">Top entries</h2>
         </div>
