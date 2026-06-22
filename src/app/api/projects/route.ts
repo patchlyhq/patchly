@@ -1,25 +1,25 @@
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getUser } from '@/lib/get-auth';
 import { projects } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
-  const user = await getSession();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function GET(request: Request) {
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const rows = await db
     .select()
     .from(projects)
-    .where(eq(projects.userId, user.id))
+    .where(eq(projects.userId, u.id))
     .orderBy(projects.createdAt);
 
   return NextResponse.json(rows);
 }
 
 export async function POST(request: Request) {
-  const user = await getSession();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json().catch(() => null);
   const name: string = body?.name?.trim() ?? '';
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
   const [project] = await db
     .insert(projects)
-    .values({ userId: user.id, name, slug })
+    .values({ userId: u.id, name, slug })
     .returning();
 
   return NextResponse.json(project, { status: 201 });

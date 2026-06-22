@@ -1,12 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-const COOKIE_NAME = 'patchly_session';
-
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionId = request.cookies.get(COOKIE_NAME)?.value;
+  const sessionToken = request.cookies.get('better-auth.session_token')?.value;
 
-  if (pathname.startsWith('/dashboard') && !sessionId) {
+  if (pathname.startsWith('/dashboard') && !sessionToken) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('next', pathname);

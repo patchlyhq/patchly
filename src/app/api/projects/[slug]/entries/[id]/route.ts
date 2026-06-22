@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getUser } from '@/lib/get-auth';
 import { entries, projects } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
@@ -18,11 +18,11 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
-  const user = await getSession();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { id } = await params;
-  if (!(await assertOwnership(user.id, id))) {
+  if (!(await assertOwnership(u.id, id))) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
@@ -47,14 +47,14 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
-  const user = await getSession();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { id } = await params;
-  if (!(await assertOwnership(user.id, id))) {
+  if (!(await assertOwnership(u.id, id))) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 

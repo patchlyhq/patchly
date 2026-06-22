@@ -26,6 +26,7 @@
     "@radix-ui/react-dialog": "^1.1.17",
     "@radix-ui/react-tooltip": "^1.2.10",
     "@stripe/stripe-js": "^9.8.0",
+    "better-auth": "^1.6.20",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cobe": "^2.0.1",

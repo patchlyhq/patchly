@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { authClient } from '@/lib/auth-client';
 
 export function ProfileDialog({
   open,
@@ -32,7 +33,7 @@ export function ProfileDialog({
   };
 
   const handleSignOut = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    await authClient.signOut();
     window.location.href = '/login';
   };
 

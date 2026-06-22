@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { getSession } from '@/lib/session';
+import { getUser } from '@/lib/get-auth';
 import { entries, projects } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
@@ -14,14 +14,14 @@ async function getProject(userId: string, slug: string) {
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const user = await getSession();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { slug } = await params;
-  const project = await getProject(user.id, slug);
+  const project = await getProject(u.id, slug);
   if (!project) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const rows = await db
@@ -37,11 +37,11 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const user = await getSession();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { slug } = await params;
-  const project = await getProject(user.id, slug);
+  const project = await getProject(u.id, slug);
   if (!project) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const body = await request.json().catch(() => null);
