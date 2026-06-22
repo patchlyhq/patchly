@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Patchly
 
-## Getting Started
+Open-source changelog platform. Give every product a public changelog page, an embeddable widget, and email subscriber notifications.
 
-First, run the development server:
+**Live demo:** [patchly.dawit.dev](https://patchly.dawit.dev)
+
+## Features
+
+- Public changelog pages at `/:slug`
+- Embeddable JS widget (one script tag)
+- Email subscriber notifications via Resend
+- Magic link authentication — no passwords
+- Markdown support with syntax highlighting
+- Dashboard with projects, entries, subscribers, analytics
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) App Router
+- [Neon](https://neon.tech) serverless Postgres
+- [Drizzle ORM](https://orm.drizzle.team)
+- [Resend](https://resend.com) transactional email
+- [Tailwind CSS v4](https://tailwindcss.com)
+- TypeScript · Biome · pnpm
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm 10+
+- A [Neon](https://neon.tech) database
+- A [Resend](https://resend.com) account with a verified domain
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/patchlyhq/patchly
+cd patchly
+pnpm install
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in `.env.local` with your credentials, then:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm db:push   # creates database tables
+pnpm dev       # starts at http://localhost:3030
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Environment variables
 
-## Learn More
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | Neon Postgres connection string |
+| `RESEND_API_KEY` | Resend API key for magic link emails |
+| `SESSION_SECRET` | Random string for session signing |
+| `NEXT_PUBLIC_APP_URL` | Your app's public URL |
 
-To learn more about Next.js, take a look at the following resources:
+## Database
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm db:push    # push schema changes to database
+pnpm db:studio  # open Drizzle Studio
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Deploy to [Vercel](https://vercel.com) with zero config. Add environment variables in the Vercel dashboard.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/patchlyhq/patchly)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT — see [LICENSE](LICENSE).

@@ -1,0 +1,144 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#060d1e"/>
+      <stop offset="35%"  stop-color="#0d1f47"/>
+      <stop offset="65%"  stop-color="#173367"/>
+      <stop offset="82%"  stop-color="#2e5688"/>
+      <stop offset="92%"  stop-color="#7b9fbc"/>
+      <stop offset="100%" stop-color="#c8a97e"/>
+    </linearGradient>
+    <radialGradient id="horizon-glow" cx="50%" cy="100%" r="55%">
+      <stop offset="0%"   stop-color="#f0a94a" stop-opacity="0.75"/>
+      <stop offset="30%"  stop-color="#c45e2a" stop-opacity="0.35"/>
+      <stop offset="70%"  stop-color="#8b2fc9" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="moon-glow" cx="72%" cy="18%" r="18%">
+      <stop offset="0%"   stop-color="#d8e8f8" stop-opacity="0.55"/>
+      <stop offset="50%"  stop-color="#a0c0e0" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="nebula1" cx="25%" cy="30%" r="30%">
+      <stop offset="0%"   stop-color="#3a2060" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="nebula2" cx="80%" cy="45%" r="25%">
+      <stop offset="0%"   stop-color="#0a3060" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base sky -->
+  <rect width="1600" height="900" fill="url(#sky-grad)"/>
+
+  <!-- Nebula clouds -->
+  <rect width="1600" height="900" fill="url(#nebula1)"/>
+  <rect width="1600" height="900" fill="url(#nebula2)"/>
+
+  <!-- Horizon golden glow -->
+  <rect width="1600" height="900" fill="url(#horizon-glow)"/>
+
+  <!-- Moon soft glow -->
+  <rect width="1600" height="900" fill="url(#moon-glow)"/>
+
+  <!-- Moon disc -->
+  <circle cx="1152" cy="162" r="28" fill="#e8f2fc" opacity="0.92"/>
+  <circle cx="1152" cy="162" r="36" fill="#d0e4f4" opacity="0.3"/>
+
+  <!-- Stars — scattered, varied sizes and brightness -->
+  <g fill="white">
+    <circle cx="48"   cy="38"  r="1.2" opacity="0.9"/>
+    <circle cx="112"  cy="15"  r="0.8" opacity="0.7"/>
+    <circle cx="180"  cy="62"  r="1.0" opacity="0.8"/>
+    <circle cx="234"  cy="24"  r="0.6" opacity="0.6"/>
+    <circle cx="298"  cy="50"  r="1.4" opacity="0.95"/>
+    <circle cx="360"  cy="12"  r="0.7" opacity="0.65"/>
+    <circle cx="415"  cy="74"  r="0.9" opacity="0.75"/>
+    <circle cx="470"  cy="33"  r="1.1" opacity="0.85"/>
+    <circle cx="520"  cy="55"  r="0.6" opacity="0.55"/>
+    <circle cx="590"  cy="18"  r="1.3" opacity="0.9"/>
+    <circle cx="645"  cy="80"  r="0.8" opacity="0.7"/>
+    <circle cx="700"  cy="36"  r="1.0" opacity="0.8"/>
+    <circle cx="760"  cy="58"  r="0.7" opacity="0.65"/>
+    <circle cx="820"  cy="22"  r="1.2" opacity="0.88"/>
+    <circle cx="880"  cy="68"  r="0.9" opacity="0.72"/>
+    <circle cx="935"  cy="14"  r="1.1" opacity="0.85"/>
+    <circle cx="990"  cy="48"  r="0.6" opacity="0.6"/>
+    <circle cx="1045" cy="30"  r="1.3" opacity="0.9"/>
+    <circle cx="1100" cy="72"  r="0.8" opacity="0.7"/>
+    <circle cx="1210" cy="40"  r="0.7" opacity="0.65"/>
+    <circle cx="1265" cy="16"  r="1.0" opacity="0.82"/>
+    <circle cx="1320" cy="55"  r="0.9" opacity="0.74"/>
+    <circle cx="1380" cy="28"  r="1.2" opacity="0.88"/>
+    <circle cx="1438" cy="66"  r="0.6" opacity="0.58"/>
+    <circle cx="1492" cy="20"  r="1.1" opacity="0.84"/>
+    <circle cx="1545" cy="44"  r="0.8" opacity="0.69"/>
+    <circle cx="1590" cy="78"  r="1.0" opacity="0.77"/>
+    <!-- Second row, slightly lower -->
+    <circle cx="72"   cy="118" r="0.7" opacity="0.55"/>
+    <circle cx="155"  cy="140" r="1.0" opacity="0.72"/>
+    <circle cx="310"  cy="130" r="0.8" opacity="0.62"/>
+    <circle cx="440"  cy="148" r="1.2" opacity="0.78"/>
+    <circle cx="570"  cy="122" r="0.6" opacity="0.5"/>
+    <circle cx="680"  cy="155" r="0.9" opacity="0.68"/>
+    <circle cx="800"  cy="135" r="1.1" opacity="0.76"/>
+    <circle cx="920"  cy="150" r="0.7" opacity="0.58"/>
+    <circle cx="1030" cy="118" r="1.3" opacity="0.82"/>
+    <circle cx="1190" cy="142" r="0.8" opacity="0.64"/>
+    <circle cx="1350" cy="128" r="1.0" opacity="0.74"/>
+    <circle cx="1510" cy="145" r="0.9" opacity="0.66"/>
+  </g>
+
+  <!-- Atmospheric haze band near horizon -->
+  <rect x="0" y="680" width="1600" height="80" fill="#a8c8e8" opacity="0.08"/>
+  <rect x="0" y="740" width="1600" height="60" fill="#c8a060" opacity="0.12"/>
+
+  <!-- Distant mountain range — far, lighter -->
+  <path d="M0 700 L80 620 L160 650 L240 580 L320 610 L400 545 L480 578 L560 530 L640 562 L720 510 L800 545 L880 498 L960 532 L1040 488 L1120 520 L1200 475 L1280 508 L1360 465 L1440 498 L1520 470 L1600 490 L1600 900 L0 900Z"
+    fill="#1a3a62" opacity="0.85"/>
+
+  <!-- Mid mountain range -->
+  <path d="M0 760 L100 680 L180 710 L260 660 L340 690 L420 640 L500 665 L580 625 L660 655 L740 605 L820 635 L900 592 L980 618 L1060 575 L1140 605 L1220 560 L1300 590 L1380 548 L1460 575 L1540 535 L1600 558 L1600 900 L0 900Z"
+    fill="#0f2240" opacity="0.9"/>
+
+  <!-- Foreground ridgeline — darkest -->
+  <path d="M0 820 L60 790 L130 810 L200 775 L280 800 L360 768 L440 790 L520 758 L600 780 L680 748 L760 772 L840 738 L920 762 L1000 732 L1080 755 L1160 720 L1240 745 L1320 715 L1400 740 L1480 712 L1560 735 L1600 720 L1600 900 L0 900Z"
+    fill="#060d1e"/>
+
+  <!-- Pine tree silhouettes on the ridgeline -->
+  <g fill="#060d1e">
+    <!-- Group 1: left side -->
+    <polygon points="80,788 88,820 72,820"/>
+    <polygon points="90,780 100,815 80,815"/>
+    <polygon points="102,785 112,818 92,818"/>
+    <polygon points="118,775 130,812 106,812"/>
+    <polygon points="134,782 144,814 124,814"/>
+
+    <!-- Group 2: center-left -->
+    <polygon points="420,762 430,798 410,798"/>
+    <polygon points="432,754 444,792 420,792"/>
+    <polygon points="448,758 460,795 436,795"/>
+    <polygon points="464,748 478,788 450,788"/>
+    <polygon points="480,754 492,790 468,790"/>
+    <polygon points="495,760 505,794 485,794"/>
+
+    <!-- Group 3: center-right -->
+    <polygon points="840,740 850,776 830,776"/>
+    <polygon points="852,733 864,770 840,770"/>
+    <polygon points="866,738 878,774 854,774"/>
+    <polygon points="882,728 896,768 868,768"/>
+    <polygon points="898,734 910,770 886,770"/>
+
+    <!-- Group 4: right -->
+    <polygon points="1260,716 1270,752 1250,752"/>
+    <polygon points="1272,709 1284,746 1260,746"/>
+    <polygon points="1286,714 1298,750 1274,750"/>
+    <polygon points="1302,706 1316,745 1288,745"/>
+    <polygon points="1318,712 1330,748 1306,748"/>
+  </g>
+
+  <!-- Subtle light reflection on water at base (optional shimmer) -->
+  <rect x="550" y="862" width="500" height="6" rx="3" fill="#f0c860" opacity="0.18"/>
+  <rect x="620" y="872" width="360" height="4" rx="2" fill="#f0c860" opacity="0.12"/>
+</svg>
