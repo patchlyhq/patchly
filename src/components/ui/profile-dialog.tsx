@@ -1,7 +1,7 @@
 'use client';
 import * as Dialog from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowRight, Camera, X } from 'lucide-react';
+import { Camera, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -99,9 +99,9 @@ export function ProfileDialog({
                       <Link
                         href="/dashboard/upgrade"
                         onClick={() => onOpenChange(false)}
-                        className="flex items-center gap-1 text-xs font-medium text-black/50 transition-colors hover:text-black/75"
+                        className="flex items-center gap-1 text-xs font-medium text-black/35 transition-colors hover:text-black/55"
                       >
-                        Upgrade <ArrowRight size={11} />
+                        Coming soon
                       </Link>
                     </div>
 

@@ -408,8 +408,13 @@ export default async function LandingPage() {
           </RevealWrapper>
 
           <RevealWrapper delay={0.12}>
-            <div className="rounded-2xl bg-black p-8 h-full">
-              <p className="font-mono text-xs text-white/35 mb-4">pro</p>
+            <div className="rounded-2xl bg-black p-8 h-full flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <p className="font-mono text-xs text-white/35">pro</p>
+                <span className="rounded-full border border-white/15 px-2.5 py-0.5 text-[10px] font-medium text-white/40">
+                  Coming soon
+                </span>
+              </div>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-5xl font-black text-white">
                   $<PricingNumber value={12} />
@@ -417,7 +422,7 @@ export default async function LandingPage() {
                 <span className="text-sm text-white/40">/mo</span>
               </div>
               <p className="text-sm text-white/45 mb-8">For growing products</p>
-              <ul className="mb-8 space-y-2.5">
+              <ul className="mb-8 space-y-2.5 flex-1">
                 {[
                   'Unlimited projects',
                   'Unlimited entries',
@@ -435,12 +440,13 @@ export default async function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href={isAuthed ? '/dashboard' : '/login'}
-                className="block w-full rounded-xl bg-white py-2.5 text-center text-sm font-semibold text-black hover:bg-white/90 transition-all"
+              <button
+                type="button"
+                disabled
+                className="block w-full cursor-not-allowed rounded-xl bg-white/10 py-2.5 text-center text-sm font-medium text-white/30"
               >
-                {isAuthed ? 'Go to dashboard' : 'Get started'}
-              </Link>
+                Payments not ready yet
+              </button>
             </div>
           </RevealWrapper>
         </div>
