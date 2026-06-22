@@ -111,7 +111,7 @@ export default function NewEntryPage({
           <span className="text-black/20">/</span>
           <span className="text-sm text-black/55">New entry</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setPreview((p) => !p)}

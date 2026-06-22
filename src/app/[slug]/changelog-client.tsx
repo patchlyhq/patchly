@@ -115,7 +115,7 @@ export function ChangelogClient({
               animationNum={i}
               timelineRef={timelineRef as React.RefObject<HTMLElement>}
             >
-              <div className="flex gap-6">
+              <div className="flex gap-4 sm:gap-6">
                 <div className="relative mt-5 shrink-0">
                   <div className="h-3.5 w-3.5 rounded-full border border-black/15 bg-[var(--color-bg)]" />
                 </div>

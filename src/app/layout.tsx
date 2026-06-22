@@ -6,7 +6,7 @@ import './globals.css';
 
 const archivo = Archivo({
   variable: '--font-archivo',
-  weight: ['400', '500', '700', '800', '900'],
+  weight: ['400', '700', '800', '900'],
   subsets: ['latin'],
 });
 const geistMono = Geist_Mono({

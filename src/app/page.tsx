@@ -1,14 +1,12 @@
-'use client';
-import NumberFlow from '@number-flow/react';
-import { ArrowRight, Bell, Check, Code2, Globe } from 'lucide-react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { ArrowRight, Check, Code2, Bell, Globe } from 'lucide-react';
 import Link from 'next/link';
-import { useRef } from 'react';
-import Marquee from 'react-fast-marquee';
 import Balancer from 'react-wrap-balancer';
-import { Reveal } from '@/components/motion/reveal';
-import { SmoothScroll } from '@/components/motion/smooth-scroll';
-import { TextEffect } from '@/components/motion/text-effect';
+import { HeroAnimation } from './landing/hero-animation';
+import { LandingNav } from './landing/landing-nav';
+import { MarqueeStrip } from './landing/marquee-strip';
+import { PricingNumber, TrustStat } from './landing/pricing-numbers';
+import { RevealWrapper } from './landing/reveal-wrapper';
+import { WidgetPreview } from './landing/widget-preview';
 
 const DEMO_ENTRIES = [
   {
@@ -194,282 +192,18 @@ const FEATURES = [
   },
 ];
 
-function PricingNumber({ value }: { value: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  return (
-    <span ref={ref}>
-      <NumberFlow value={inView ? value : 0} format={{ style: 'decimal' }} />
-    </span>
-  );
-}
-
-function TrustStat({
-  value,
-  suffix,
-  label,
-}: {
-  value: number;
-  suffix: string;
-  label: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true });
-  return (
-    <div ref={ref} className="text-center">
-      <p className="flex items-baseline justify-center gap-0.5 text-5xl font-black tracking-tight text-black">
-        <NumberFlow value={inView ? value : 0} />
-        <span className="text-2xl text-black/65">{suffix}</span>
-      </p>
-      <p className="mt-2 text-xs font-medium uppercase tracking-widest text-black/30">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function WidgetPreview() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '80px' });
-
-  return (
-    <div
-      ref={ref}
-      className="overflow-hidden rounded-2xl border border-black/10 shadow-[0_8px_40px_rgba(0,0,0,0.07)]"
-    >
-      {/* Browser chrome */}
-      <div className="flex items-center gap-2 border-b border-black/8 bg-[oklch(97.5%_0_0)] px-4 py-2.5">
-        <div className="flex gap-1.5">
-          <div className="h-2 w-2 rounded-full bg-black/10" />
-          <div className="h-2 w-2 rounded-full bg-black/10" />
-          <div className="h-2 w-2 rounded-full bg-black/10" />
-        </div>
-        <div className="flex flex-1 justify-center">
-          <div className="flex items-center gap-1.5 rounded-md bg-black/6 px-2.5 py-0.5">
-            <div className="h-1.5 w-1.5 rounded-full bg-black/20" />
-            <span className="text-[10px] text-black/35">
-              myapp.com/dashboard
-            </span>
-          </div>
-        </div>
-        <div className="w-16" />
-      </div>
-
-      {/* App content */}
-      <div className="relative bg-white" style={{ height: 280 }}>
-        {/* Fake sidebar */}
-        <div className="absolute inset-y-0 left-0 flex w-12 flex-col items-center gap-3 border-r border-black/5 bg-[oklch(98.5%_0_0)] py-4">
-          <div className="h-5 w-5 rounded-md bg-black/12" />
-          <div className="mt-2 h-3.5 w-3.5 rounded bg-black/6" />
-          <div className="h-3.5 w-3.5 rounded bg-black/6" />
-          <div className="h-3.5 w-3.5 rounded bg-black/6" />
-        </div>
-
-        {/* Fake page content */}
-        <div className="ml-12 p-5 opacity-40">
-          <div className="mb-4 h-3 w-28 rounded bg-black/15" />
-          <div className="mb-4 grid grid-cols-3 gap-2">
-            <div className="h-12 rounded-lg bg-black/7" />
-            <div className="h-12 rounded-lg bg-black/7" />
-            <div className="h-12 rounded-lg bg-black/7" />
-          </div>
-          <div className="space-y-2">
-            <div className="h-2 w-full rounded bg-black/7" />
-            <div className="h-2 w-5/6 rounded bg-black/5" />
-            <div className="h-2 w-4/6 rounded bg-black/5" />
-          </div>
-        </div>
-
-        {/* Animated widget popup */}
-        <div className="absolute bottom-3 right-3">
-          <motion.div
-            className="mb-2 w-60 overflow-hidden rounded-xl border border-black/10 bg-white shadow-[0_8px_28px_rgba(0,0,0,0.13)]"
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-            transition={{
-              delay: 0.45,
-              duration: 0.38,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            <div className="flex items-center justify-between border-b border-black/6 px-3.5 py-2.5">
-              <span className="text-xs font-semibold text-black">
-                What&apos;s new
-              </span>
-              <span className="rounded-full bg-black px-1.5 py-0.5 text-[9px] font-bold text-white">
-                3
-              </span>
-            </div>
-            <div className="divide-y divide-black/5">
-              {[
-                {
-                  version: 'v2.4.0',
-                  title: 'Faster search + ⌘K',
-                  tag: 'Performance',
-                },
-                { version: 'v2.3.0', title: 'Markdown support', tag: 'New' },
-              ].map((e) => (
-                <div key={e.version} className="px-3.5 py-2.5">
-                  <div className="mb-0.5 flex items-center gap-1.5">
-                    <span className="font-mono text-[9px] text-black/35">
-                      {e.version}
-                    </span>
-                    <span className="rounded border border-black/10 px-1 py-px text-[8px] text-black/30">
-                      {e.tag}
-                    </span>
-                  </div>
-                  <p className="text-[11px] font-medium text-black/72">
-                    {e.title}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="border-t border-black/6 px-3.5 py-2">
-              <span className="text-[10px] text-black/35">
-                View all updates →
-              </span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex justify-end"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{
-              delay: 0.25,
-              duration: 0.3,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            <div className="flex items-center gap-1.5 rounded-full bg-black px-3 py-1.5 shadow-lg">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
-              </span>
-              <span className="text-[10px] font-medium text-white">
-                What&apos;s new
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function LandingPage() {
-  const reduced = useReducedMotion();
-
   return (
-    <div className="min-h-screen bg-white">
-      <SmoothScroll />
-
-      {/* Nav */}
-      <motion.nav
-        className="flex items-center justify-between px-8 py-5 border-b border-black/6"
-        initial={reduced ? false : { opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <span className="text-sm font-bold tracking-tight text-black">
-          Patchly
-        </span>
-        <div className="flex items-center gap-6">
-          <Link
-            href="#features"
-            className="text-sm text-black/45 hover:text-black transition-colors"
-          >
-            Features
-          </Link>
-          <Link
-            href="#pricing"
-            className="text-sm text-black/45 hover:text-black transition-colors"
-          >
-            Pricing
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-lg bg-black px-4 py-1.5 text-sm font-medium text-white hover:bg-black/85 transition-colors"
-          >
-            Sign in
-          </Link>
-        </div>
-      </motion.nav>
+    <div className="relative min-h-screen bg-white">
+      <LandingNav />
 
       {/* Hero */}
-      <section className="mx-auto max-w-4xl px-8 pt-24 pb-16 text-center">
-        <motion.p
-          className="mb-6 text-xs font-semibold uppercase tracking-widest text-black/30"
-          initial={reduced ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          Changelog infrastructure
-        </motion.p>
-
-        <h1 className="mb-6 text-6xl font-black leading-[1.02] tracking-tight text-black lg:text-7xl">
-          <Balancer>
-            <TextEffect
-              text="Changelogs your users actually read."
-              delay={0.2}
-            />
-          </Balancer>
-        </h1>
-
-        <motion.p
-          className="mx-auto mb-10 max-w-lg text-lg leading-relaxed text-black/45"
-          initial={reduced ? false : { opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-        >
-          Write release notes once. Get a beautiful public page, an embeddable
-          widget, and users who know what you shipped.
-        </motion.p>
-
-        <motion.div
-          className="flex flex-wrap items-center justify-center gap-3 mb-6"
-          initial={reduced ? false : { opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.78, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Link
-            href="/login"
-            className="flex items-center gap-2 rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-black/85 transition-all"
-          >
-            Start for free <ArrowRight size={14} />
-          </Link>
-          <Link
-            href="/patchly"
-            className="flex items-center gap-2 rounded-xl border border-black/12 px-6 py-3 text-sm font-medium text-black/60 hover:border-black/25 hover:text-black transition-all"
-          >
-            See live example
-          </Link>
-        </motion.div>
-
-        <motion.ul
-          className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1"
-          initial={reduced ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.9 }}
-        >
-          {[
-            'Free forever plan',
-            'No credit card required',
-            'Live in 2 minutes',
-          ].map((item) => (
-            <li
-              key={item}
-              className="flex items-center gap-1.5 text-xs text-black/35"
-            >
-              <Check size={11} className="text-black/25" />
-              {item}
-            </li>
-          ))}
-        </motion.ul>
+      <section className="mx-auto max-w-4xl px-5 pt-16 pb-16 text-center sm:px-8 sm:pt-24">
+        <HeroAnimation />
       </section>
 
       {/* Product preview */}
-      <Reveal className="mx-auto max-w-3xl px-8 pb-24" delay={0.1}>
+      <RevealWrapper className="mx-auto max-w-3xl px-5 pb-24 sm:px-8" delay={0.1}>
         <div className="overflow-hidden rounded-2xl border border-black/10 shadow-[0_8px_40px_rgba(0,0,0,0.08)]">
           <div className="flex items-center gap-2 border-b border-black/8 bg-[oklch(98%_0_0)] px-4 py-3">
             <div className="flex gap-1.5">
@@ -482,7 +216,7 @@ export default function LandingPage() {
               <span className="text-xs text-black/35">acme-app.patchly.io</span>
             </div>
           </div>
-          <div className="bg-white px-10 py-10">
+          <div className="bg-white px-5 py-6 sm:px-10 sm:py-10">
             <div className="mb-10">
               <h2 className="text-2xl font-black tracking-tight text-black">
                 Acme App
@@ -530,20 +264,20 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </Reveal>
+      </RevealWrapper>
 
       {/* Trust numbers */}
       <section className="border-y border-black/6 py-16">
-        <div className="mx-auto grid max-w-2xl grid-cols-3 gap-8 px-8">
-          <Reveal>
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-8 px-5 sm:grid-cols-3 sm:px-8">
+          <RevealWrapper>
             <TrustStat value={2400} suffix="+" label="changelogs live" />
-          </Reveal>
-          <Reveal delay={0.05}>
+          </RevealWrapper>
+          <RevealWrapper delay={0.05}>
             <TrustStat value={18000} suffix="+" label="users notified" />
-          </Reveal>
-          <Reveal delay={0.1}>
+          </RevealWrapper>
+          <RevealWrapper delay={0.1}>
             <TrustStat value={5} suffix="min" label="to set up" />
-          </Reveal>
+          </RevealWrapper>
         </div>
       </section>
 
@@ -552,38 +286,22 @@ export default function LandingPage() {
         <p className="mb-8 text-center text-[10px] font-semibold uppercase tracking-widest text-black/25">
           Works with the tools you already use
         </p>
-        <Marquee
-          speed={28}
-          pauseOnHover
-          gradient
-          gradientColor="oklch(98.5% 0 0)"
-          gradientWidth={80}
-          className="grayscale"
-        >
-          {[...LOGOS, ...LOGOS].map(({ label, svg }, i) => (
-            <div
-              key={`${label}-${i}`}
-              className="mx-10 opacity-30 hover:opacity-75 transition-opacity"
-            >
-              {svg}
-            </div>
-          ))}
-        </Marquee>
+        <MarqueeStrip logos={LOGOS} />
       </section>
 
       {/* Features */}
-      <section id="features" className="mx-auto max-w-5xl px-8 py-28">
-        <Reveal>
+      <section id="features" className="mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-28">
+        <RevealWrapper>
           <h2 className="mb-3 text-center text-3xl font-black tracking-tight text-black">
             Everything a changelog needs
           </h2>
           <p className="mb-16 text-center text-sm text-black/40">
             Built for products that ship continuously.
           </p>
-        </Reveal>
+        </RevealWrapper>
         <div className="grid gap-5 md:grid-cols-3">
           {FEATURES.map(({ icon: Icon, title, body }, i) => (
-            <Reveal key={title} delay={i * 0.07}>
+            <RevealWrapper key={title} delay={i * 0.07}>
               <div className="h-full rounded-2xl border border-black/8 bg-[oklch(98.5%_0_0)] p-7 transition-colors hover:border-black/15 hover:bg-white">
                 <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-black/6">
                   <Icon size={17} className="text-black/55" />
@@ -593,15 +311,15 @@ export default function LandingPage() {
                 </h3>
                 <p className="text-sm leading-relaxed text-black/45">{body}</p>
               </div>
-            </Reveal>
+            </RevealWrapper>
           ))}
         </div>
       </section>
 
       {/* Widget demo */}
       <section className="border-y border-black/6 bg-[oklch(98.5%_0_0)] py-24">
-        <div className="mx-auto grid max-w-4xl items-center gap-12 px-8 md:grid-cols-2">
-          <Reveal>
+        <div className="mx-auto grid max-w-4xl items-center gap-12 px-5 sm:px-8 md:grid-cols-2">
+          <RevealWrapper>
             <p className="mb-4 font-mono text-xs font-medium text-black/30">
               embed
             </p>
@@ -614,7 +332,7 @@ export default function LandingPage() {
               dependency, no configuration required.
             </p>
             <div className="overflow-x-auto rounded-xl bg-black px-4 py-3.5">
-              <code className="font-mono text-xs leading-relaxed">
+              <code className="font-mono text-xs leading-relaxed break-all">
                 <span className="text-white/30">{'<'}</span>
                 <span className="text-white/65">script</span>{' '}
                 <span className="text-white/40">src</span>
@@ -630,26 +348,26 @@ export default function LandingPage() {
                 <span className="text-white/30">{' />'}</span>
               </code>
             </div>
-          </Reveal>
-          <Reveal delay={0.1}>
+          </RevealWrapper>
+          <RevealWrapper delay={0.1}>
             <WidgetPreview />
-          </Reveal>
+          </RevealWrapper>
         </div>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-4xl px-8 py-28">
-        <Reveal>
+      <section id="pricing" className="mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-28">
+        <RevealWrapper>
           <h2 className="mb-3 text-center text-3xl font-black tracking-tight text-black">
             Simple pricing
           </h2>
           <p className="mb-14 text-center text-sm text-black/40">
             No per-seat fees. No surprises.
           </p>
-        </Reveal>
+        </RevealWrapper>
 
         <div className="grid md:grid-cols-2 gap-4">
-          <Reveal delay={0.05}>
+          <RevealWrapper delay={0.05}>
             <div className="rounded-2xl border border-black/10 p-8 h-full">
               <p className="font-mono text-xs text-black/30 mb-4">free</p>
               <div className="flex items-baseline gap-1 mb-1">
@@ -683,14 +401,14 @@ export default function LandingPage() {
                 Get started
               </Link>
             </div>
-          </Reveal>
+          </RevealWrapper>
 
-          <Reveal delay={0.12}>
+          <RevealWrapper delay={0.12}>
             <div className="rounded-2xl bg-black p-8 h-full">
               <p className="font-mono text-xs text-white/35 mb-4">pro</p>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-5xl font-black text-white">
-                  $<NumberFlow value={12} className="tabular-nums" />
+                  $<PricingNumber value={12} />
                 </span>
                 <span className="text-sm text-white/40">/mo</span>
               </div>
@@ -720,14 +438,14 @@ export default function LandingPage() {
                 Get started
               </Link>
             </div>
-          </Reveal>
+          </RevealWrapper>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="bg-black px-8 py-28">
-        <Reveal className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-[2.75rem] font-black leading-[1.06] tracking-tight text-white">
+      <section className="bg-black px-5 py-20 sm:px-8 sm:py-28">
+        <RevealWrapper className="mx-auto max-w-2xl text-center">
+          <h2 className="mb-4 text-3xl font-black leading-[1.06] tracking-tight text-white sm:text-[2.75rem]">
             <Balancer>Ship your first changelog in 2 minutes.</Balancer>
           </h2>
           <p className="mb-10 text-base leading-relaxed text-white/40">
@@ -748,11 +466,11 @@ export default function LandingPage() {
               See live example
             </Link>
           </div>
-        </Reveal>
+        </RevealWrapper>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-black/6 px-8 py-8">
+      <footer className="border-t border-black/6 px-5 py-8 sm:px-8">
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4">
           <span className="text-xs text-black/25">Patchly &copy; 2026</span>
           <div className="flex items-center gap-5">

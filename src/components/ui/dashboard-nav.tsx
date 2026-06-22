@@ -14,7 +14,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { useCurrentUser } from '@/hooks/use-current-user';
+import type { CurrentUser } from '@/lib/queries';
 import { ProfileDialog } from './profile-dialog';
 
 const NAV_SECTIONS = [
@@ -80,15 +80,16 @@ function NavItem({
 }
 
 export function DashboardNav({
+  user,
   collapsed,
   onToggle,
 }: {
+  user: CurrentUser;
   collapsed: boolean;
   onToggle: () => void;
 }) {
   const pathname = usePathname();
   const [profileOpen, setProfileOpen] = useState(false);
-  const user = useCurrentUser();
 
   const isActive = (href: string) =>
     href === '/dashboard'
@@ -97,7 +98,7 @@ export function DashboardNav({
 
   return (
     <Tooltip.Provider delayDuration={0}>
-      <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
+      <ProfileDialog user={user} open={profileOpen} onOpenChange={setProfileOpen} />
       <div
         className={`flex h-14 shrink-0 items-center border-b border-black/6 ${
           collapsed ? 'justify-center px-3' : 'justify-between px-5'
@@ -178,14 +179,12 @@ export function DashboardNav({
               }`}
             >
               <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                {user
-                  ? (user.name?.charAt(0) ?? user.email.charAt(0)).toUpperCase()
-                  : '…'}
+                {(user.name?.charAt(0) ?? user.email.charAt(0)).toUpperCase()}
               </div>
               {!collapsed && (
                 <div className="min-w-0 text-left">
                   <p className="truncate text-xs font-medium text-black/70">
-                    {user?.name ?? user?.email.split('@')[0] ?? '…'}
+                    {user.name ?? user.email.split('@')[0]}
                   </p>
                   <p className="text-[10px] text-black/30">Free plan</p>
                 </div>
@@ -199,7 +198,7 @@ export function DashboardNav({
                 sideOffset={8}
                 className="z-50 rounded-lg border border-black/10 bg-white px-2.5 py-1.5 text-xs font-medium text-black/70 shadow-sm"
               >
-                {(user?.name ?? user?.email?.split('@')[0] ?? 'Profile')} · Profile
+                {(user.name ?? user.email.split('@')[0])} · Profile
                 <Tooltip.Arrow className="fill-white" />
               </Tooltip.Content>
             </Tooltip.Portal>

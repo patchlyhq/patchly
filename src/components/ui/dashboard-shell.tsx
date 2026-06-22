@@ -1,10 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
+import type { CurrentUser } from '@/lib/queries';
 import { CommandPalette } from './command-palette';
 import { DashboardNav } from './dashboard-nav';
 import { MobileDashboardNav } from './mobile-nav';
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export function DashboardShell({
+  user,
+  children,
+}: {
+  user: CurrentUser;
+  children: React.ReactNode;
+}) {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -26,14 +33,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           collapsed ? 'w-14' : 'w-52'
         }`}
       >
-        <DashboardNav collapsed={collapsed} onToggle={toggle} />
+        <DashboardNav user={user} collapsed={collapsed} onToggle={toggle} />
       </aside>
       <div
         className={`flex flex-1 flex-col transition-[margin] duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           collapsed ? 'md:ml-14' : 'md:ml-52'
         }`}
       >
-        <MobileDashboardNav />
+        <MobileDashboardNav user={user} />
         <main className="flex-1 p-6 md:p-8">{children}</main>
       </div>
       <CommandPalette />

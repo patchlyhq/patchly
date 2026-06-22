@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'motion', 'recharts', '@number-flow/react'],
+  },
 };
 
 export default nextConfig;

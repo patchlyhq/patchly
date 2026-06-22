@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Drawer } from 'vaul';
+import type { CurrentUser } from '@/lib/queries';
 
 const WORKSPACE_NAV = [
   { href: '/dashboard', label: 'Projects', icon: LayoutDashboard },
@@ -26,7 +27,7 @@ const MANAGE_NAV = [
   { href: '/dashboard/integrations', label: 'Integrations', icon: Link2 },
 ];
 
-export function MobileDashboardNav() {
+export function MobileDashboardNav({ user }: { user: CurrentUser }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -128,13 +129,13 @@ export function MobileDashboardNav() {
               </Link>
               <div className="mt-2 flex items-center gap-2.5 rounded-lg px-2.5 py-2">
                 <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                  D
+                  {(user.name?.charAt(0) ?? user.email.charAt(0)).toUpperCase()}
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-xs font-medium text-black/70">
-                    Dawit
+                    {user.name ?? user.email.split('@')[0]}
                   </p>
-                  <p className="text-[10px] text-black/30">Free plan</p>
+                  <p className="text-[10px] text-black/30">{user.email}</p>
                 </div>
               </div>
             </div>

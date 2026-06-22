@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { Marked, Renderer } from 'marked';
 import type { Metadata } from 'next';
 import { getSingletonHighlighter } from 'shiki';
@@ -70,7 +72,7 @@ Or drop in the script tag directly:
 async function renderContent(content: string): Promise<string> {
   const highlighter = await getSingletonHighlighter({
     themes: ['github-dark'],
-    langs: ['typescript', 'javascript', 'html', 'css', 'bash', 'json', 'shell'],
+    langs: ['typescript', 'javascript', 'bash', 'json'],
   });
 
   const renderer = new Renderer();

@@ -1,10 +1,11 @@
+import { getSessionCookie } from 'better-auth/cookies';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionToken = request.cookies.get('better-auth.session_token')?.value;
+  const sessionCookie = getSessionCookie(request);
 
-  if (pathname.startsWith('/dashboard') && !sessionToken) {
+  if (pathname.startsWith('/dashboard') && !sessionCookie) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('next', pathname);

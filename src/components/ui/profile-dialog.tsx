@@ -3,24 +3,23 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, Camera, X } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
-import { useCurrentUser } from '@/hooks/use-current-user';
+import { useRouter } from 'next/navigation';
+import type { CurrentUser } from '@/lib/queries';
 import { authClient } from '@/lib/auth-client';
 
 export function ProfileDialog({
+  user,
   open,
   onOpenChange,
 }: {
+  user: CurrentUser;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
-  const currentUser = useCurrentUser();
-  const [name, setName] = useState('');
-
-  useEffect(() => {
-    if (currentUser?.name) setName(currentUser.name);
-  }, [currentUser]);
+  const [name, setName] = useState(user.name ?? '');
+  const router = useRouter();
 
   const handleSave = async () => {
     await fetch('/api/me', {
@@ -30,6 +29,7 @@ export function ProfileDialog({
     });
     toast.success('Profile updated');
     onOpenChange(false);
+    router.refresh();
   };
 
   const handleSignOut = async () => {
@@ -77,18 +77,16 @@ export function ProfileDialog({
                         onClick={() => toast('Photo upload coming soon.')}
                         className="group relative flex h-16 w-16 items-center justify-center rounded-full bg-black text-xl font-black text-white transition-opacity hover:opacity-85"
                       >
-                        {currentUser
-                          ? (currentUser.name?.charAt(0) ?? currentUser.email.charAt(0)).toUpperCase()
-                          : '?'}
+                        {(user.name?.charAt(0) ?? user.email.charAt(0)).toUpperCase()}
                         <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                           <Camera size={16} className="text-white" />
                         </span>
                       </button>
                       <div className="text-center">
                         <p className="text-sm font-semibold text-black/80">
-                          {name || currentUser?.email?.split('@')[0] || '…'}
+                          {name || user.email.split('@')[0]}
                         </p>
-                        <p className="text-xs text-black/35">{currentUser?.email ?? '…'}</p>
+                        <p className="text-xs text-black/35">{user.email}</p>
                       </div>
                     </div>
 
@@ -126,7 +124,7 @@ export function ProfileDialog({
                         </label>
                         <input
                           type="email"
-                          value={currentUser?.email ?? ''}
+                          value={user.email}
                           disabled
                           className="w-full cursor-not-allowed rounded-xl border border-black/8 bg-black/3 px-3.5 py-2.5 text-sm text-black/35"
                         />
