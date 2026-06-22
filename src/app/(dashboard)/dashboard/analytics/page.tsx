@@ -1,9 +1,5 @@
-import dynamic from 'next/dynamic';
+import { ViewsChartWrapper } from './chart-wrapper';
 import { StatsClient } from './stats-client';
-
-const ViewsChart = dynamic(() => import('./views-chart').then((m) => m.ViewsChart), {
-  ssr: false,
-});
 
 const TOP_ENTRIES = [
   { title: 'Embeddable widget is live', version: 'v2.2.0', views: 892, project: 'Acme App' },
@@ -25,7 +21,7 @@ export default function AnalyticsPage() {
 
       <StatsClient />
 
-      <ViewsChart />
+      <ViewsChartWrapper />
 
       {/* Top entries */}
       <div className="overflow-hidden rounded-xl border border-black/8">
