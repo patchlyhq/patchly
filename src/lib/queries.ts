@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
-import { projects, entries, subscribers } from '@/db/schema';
+import { projects, entries, subscribers, integrations } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 
 export type CurrentUser = {
@@ -97,6 +97,25 @@ export async function getProjectsWithSecrets(userId: string): Promise<ProjectWit
     })
     .from(projects)
     .where(eq(projects.userId, userId));
+}
+
+export type ProjectIntegration = {
+  projectId: string;
+  provider: string;
+  config: unknown;
+};
+
+export async function getProjectIntegrations(userId: string): Promise<ProjectIntegration[]> {
+  const rows = await db
+    .select({
+      projectId: integrations.projectId,
+      provider: integrations.provider,
+      config: integrations.config,
+    })
+    .from(integrations)
+    .innerJoin(projects, eq(integrations.projectId, projects.id))
+    .where(eq(projects.userId, userId));
+  return rows;
 }
 
 export async function getSubscriberStats(userId: string): Promise<SubscriberStats> {

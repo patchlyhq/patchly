@@ -3,6 +3,7 @@ import { getUser } from '@/lib/get-auth';
 import { entries, projects } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { dispatchPublish } from '@/lib/notify';
 
 async function assertOwnership(userId: string, entryId: string) {
   const result = await db
@@ -27,6 +28,11 @@ export async function PATCH(
   }
 
   const body = await request.json().catch(() => null);
+
+  // Snapshot prior published state so we only dispatch once per publish event
+  const prior = await db.select({ published: entries.published, projectId: entries.projectId }).from(entries).where(eq(entries.id, id)).limit(1);
+  const wasUnpublished = prior[0] && !prior[0].published;
+
   const updates: Record<string, unknown> = { updatedAt: new Date() };
   if (body?.title !== undefined) updates.title = body.title;
   if (body?.version !== undefined) updates.version = body.version;
@@ -42,6 +48,10 @@ export async function PATCH(
     .set(updates)
     .where(eq(entries.id, id))
     .returning();
+
+  if (body?.published === true && wasUnpublished && updated) {
+    dispatchPublish(updated.projectId, updated).catch(() => null);
+  }
 
   return NextResponse.json(updated);
 }

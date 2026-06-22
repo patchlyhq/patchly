@@ -3,6 +3,7 @@ import { getUser } from '@/lib/get-auth';
 import { entries, projects } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { dispatchPublish } from '@/lib/notify';
 
 async function getProject(userId: string, slug: string) {
   const result = await db
@@ -60,6 +61,10 @@ export async function POST(
       publishedAt: body?.published ? new Date() : null,
     })
     .returning();
+
+  if (entry.published) {
+    dispatchPublish(entry.projectId, entry).catch(() => null);
+  }
 
   return NextResponse.json(entry, { status: 201 });
 }

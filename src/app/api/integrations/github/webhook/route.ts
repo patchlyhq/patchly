@@ -44,6 +44,7 @@ export async function POST(request: Request) {
   const payload = JSON.parse(body) as {
     action: string;
     release: {
+      id: number;
       tag_name: string;
       name: string;
       body: string;
@@ -64,7 +65,8 @@ export async function POST(request: Request) {
     tag: release.prerelease ? 'patch' : 'release',
     content: release.body ?? '',
     published: false,
-  });
+    sourceId: `github:release:${release.id}`,
+  }).onConflictDoNothing();
 
   return NextResponse.json({ ok: true });
 }

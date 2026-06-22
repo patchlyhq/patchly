@@ -1,5 +1,6 @@
 import {
   boolean,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -86,9 +87,10 @@ export const entries = pgTable('entries', {
   content: text('content').notNull().default(''),
   published: boolean('published').notNull().default(false),
   publishedAt: timestamp('published_at'),
+  sourceId: text('source_id'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
+}, (t) => [uniqueIndex('entries_project_source_idx').on(t.projectId, t.sourceId)]);
 
 export const subscribers = pgTable(
   'subscribers',
@@ -105,8 +107,23 @@ export const subscribers = pgTable(
   (t) => [uniqueIndex('subscribers_project_email_idx').on(t.projectId, t.email)],
 );
 
+export const integrations = pgTable(
+  'integrations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    provider: text('provider').notNull(),
+    config: jsonb('config').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('integrations_project_provider_idx').on(t.projectId, t.provider)],
+);
+
 export type User = typeof user.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type Entry = typeof entries.$inferSelect;
 export type Subscriber = typeof subscribers.$inferSelect;
+export type Integration = typeof integrations.$inferSelect;

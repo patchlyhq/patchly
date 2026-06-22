@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/get-auth';
 import { db } from '@/lib/db';
 import { projects } from '@/db/schema';
+import { pullGithubEntries } from '@/lib/github';
 
 export async function GET(request: Request) {
   const u = await getUser(request);
@@ -101,6 +102,12 @@ export async function GET(request: Request) {
     githubWebhookId: String(hookData.id),
     githubWebhookSecret: webhookSecret,
   }).where(eq(projects.id, projectId));
+
+  // Backfill existing releases/tags/PRs as drafts (best-effort — failure doesn't block connect)
+  const fresh = await db.select().from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (fresh[0]) {
+    await pullGithubEntries(fresh[0]).catch(() => null);
+  }
 
   return redirect('/dashboard/integrations?github=connected');
 }
