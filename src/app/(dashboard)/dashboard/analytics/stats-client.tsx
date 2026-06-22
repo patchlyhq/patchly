@@ -5,12 +5,6 @@ import { BarChart2, Eye, TrendingUp, Users } from 'lucide-react';
 import { useInView } from 'motion/react';
 import { useRef } from 'react';
 
-const STATS = [
-  { label: 'Total page views', value: 3241, display: '+12% this month', icon: Eye },
-  { label: 'Subscribers', value: 148, display: '+8 this week', icon: Users },
-  { label: 'Entries published', value: 23, display: '4 this month', icon: BarChart2 },
-  { label: 'Avg. views / entry', value: 141, display: 'Up from 118', icon: TrendingUp },
-];
 
 const ACTIVE_DAYS = new Set([3, 7, 12, 18, 22, 27, 31, 35, 40, 44, 49, 55, 60, 66, 72]);
 const DOUBLE_DAYS = new Set([25, 52, 78]);
@@ -81,12 +75,19 @@ function HeatCell({ value, index }: { value: number; index: number }) {
   );
 }
 
-export function StatsClient() {
+export function StatsClient({ totalViews }: { totalViews: number }) {
+  const stats = [
+    { label: 'Total page views', value: totalViews, display: 'All time', icon: Eye },
+    { label: 'Subscribers', value: 0, display: 'Coming soon', icon: Users },
+    { label: 'Entries published', value: 0, display: 'Coming soon', icon: BarChart2 },
+    { label: 'Avg. views / entry', value: 0, display: 'Coming soon', icon: TrendingUp },
+  ];
+
   return (
     <TooltipPrimitive.Provider delayDuration={120}>
       {/* Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {STATS.map((stat) => (
+        {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
       </div>

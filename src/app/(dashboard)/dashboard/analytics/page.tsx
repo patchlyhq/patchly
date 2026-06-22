@@ -1,3 +1,5 @@
+import { getCurrentUser, getAnalyticsStats } from '@/lib/queries';
+import { redirect } from 'next/navigation';
 import { ViewsChartWrapper } from './chart-wrapper';
 import { StatsClient } from './stats-client';
 
@@ -9,7 +11,12 @@ const TOP_ENTRIES = [
   { title: 'CLI tool beta release', version: 'v1.0.0', views: 247, project: 'Dev Tools' },
 ];
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+
+  const { totalViews, daily } = await getAnalyticsStats(user.id);
+
   return (
     <div className="max-w-4xl">
       <div className="mb-10">
@@ -19,9 +26,9 @@ export default function AnalyticsPage() {
         </p>
       </div>
 
-      <StatsClient />
+      <StatsClient totalViews={totalViews} />
 
-      <ViewsChartWrapper />
+      <ViewsChartWrapper daily={daily} />
 
       {/* Top entries */}
       <div className="overflow-x-auto rounded-xl border border-black/8">

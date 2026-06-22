@@ -90,11 +90,11 @@ export function NotificationsTable({
                         <div className="flex flex-wrap items-center gap-4">
                           <div>
                             <p className="text-xs text-black/35">Open rate</p>
-                            <p className="mt-0.5 text-lg font-bold text-black/75">{notif.openRate}%</p>
+                            <p className="mt-0.5 text-lg font-bold text-black/75">{notif.openRate != null ? `${notif.openRate}%` : '—'}</p>
                           </div>
                           <div>
                             <p className="text-xs text-black/35">Click rate</p>
-                            <p className="mt-0.5 text-lg font-bold text-black/75">{notif.clickRate}%</p>
+                            <p className="mt-0.5 text-lg font-bold text-black/75">{notif.clickRate != null ? `${notif.clickRate}%` : '—'}</p>
                           </div>
                           <div>
                             <p className="text-xs text-black/35">Delivered to</p>

@@ -108,7 +108,8 @@ export default async function PublicChangelogPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = PROJECTS[slug] ?? { name: slug, description: '' };
+  const projectData = PROJECTS[slug] ?? { name: slug, description: '' };
+  const project = { ...projectData, slug };
 
   const entries = await Promise.all(
     ENTRIES.map(async (e) => ({

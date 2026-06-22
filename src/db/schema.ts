@@ -1,5 +1,6 @@
 import {
   boolean,
+  integer,
   jsonb,
   pgTable,
   text,
@@ -17,6 +18,8 @@ export const user = pgTable('user', {
   image: text('image'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  notifyOnSubscriber: boolean('notify_on_subscriber').notNull().default(true),
+  weeklyDigest: boolean('weekly_digest').notNull().default(false),
 });
 
 export const session = pgTable('session', {
@@ -121,9 +124,29 @@ export const integrations = pgTable(
   (t) => [uniqueIndex('integrations_project_provider_idx').on(t.projectId, t.provider)],
 );
 
+export const pageViews = pgTable('page_views', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  entryId: uuid('entry_id').references(() => entries.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const notificationLogs = pgTable('notification_logs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  entryId: uuid('entry_id').references(() => entries.id, { onDelete: 'set null' }),
+  entryTitle: text('entry_title').notNull(),
+  version: text('version'),
+  recipientCount: integer('recipient_count').notNull().default(0),
+  sentAt: timestamp('sent_at').notNull().defaultNow(),
+});
+
+export type NotificationLog = typeof notificationLogs.$inferSelect;
+
 export type User = typeof user.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type Entry = typeof entries.$inferSelect;
 export type Subscriber = typeof subscribers.$inferSelect;
 export type Integration = typeof integrations.$inferSelect;
+export type PageView = typeof pageViews.$inferSelect;

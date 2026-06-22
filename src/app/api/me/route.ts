@@ -26,3 +26,12 @@ export async function PATCH(request: Request) {
 
   return NextResponse.json({ id: updated.id, email: updated.email, name: updated.name });
 }
+
+export async function DELETE(request: Request) {
+  const u = await getUser(request);
+  if (!u) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  await db.delete(userTable).where(eq(userTable.id, u.id));
+
+  return NextResponse.json({ ok: true });
+}

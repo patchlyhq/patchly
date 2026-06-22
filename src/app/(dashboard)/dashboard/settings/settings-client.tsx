@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { Project } from '@/db/schema';
+import { authClient } from '@/lib/auth-client';
 
 function Toggle({
   checked,
@@ -32,15 +33,26 @@ function Toggle({
   );
 }
 
-export function SettingsClient({ projects }: { projects: Project[] }) {
-  const [notifySubscriber, setNotifySubscriber] = useState(true);
-  const [weeklyDigest, setWeeklyDigest] = useState(false);
+export function SettingsClient({
+  projects,
+  initialSettings,
+}: {
+  projects: Project[];
+  initialSettings: { notifyOnSubscriber: boolean; weeklyDigest: boolean };
+}) {
+  const [notifySubscriber, setNotifySubscriber] = useState(initialSettings.notifyOnSubscriber);
+  const [weeklyDigest, setWeeklyDigest] = useState(initialSettings.weeklyDigest);
   const [widgetBranding, setWidgetBranding] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const router = useRouter();
 
-  const handleToggle = (label: string, value: boolean) => {
-    toast(`${label} ${value ? 'enabled' : 'disabled'}`);
+  const handleToggle = async (field: 'notifyOnSubscriber' | 'weeklyDigest', value: boolean) => {
+    await fetch('/api/me/settings', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [field]: value }),
+    }).catch(() => null);
   };
 
   return (
@@ -94,26 +106,20 @@ export function SettingsClient({ projects }: { projects: Project[] }) {
       <section className="space-y-4">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-black/30">Notifications</h2>
         <div className="space-y-3">
-          {(
-            [
-              { label: 'Email me on new subscriber', value: notifySubscriber, set: setNotifySubscriber },
-              { label: 'Weekly digest email', value: weeklyDigest, set: setWeeklyDigest },
-            ] as const
-          ).map(({ label, value, set }) => (
-            <div
-              key={label}
-              className="flex items-center justify-between rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3"
-            >
-              <span className="text-sm text-black/70">{label}</span>
-              <Toggle
-                checked={value}
-                onChange={(v) => {
-                  set(v);
-                  handleToggle(label, v);
-                }}
-              />
-            </div>
-          ))}
+          <div className="flex items-center justify-between rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3">
+            <span className="text-sm text-black/70">Email me on new subscriber</span>
+            <Toggle
+              checked={notifySubscriber}
+              onChange={(v) => { setNotifySubscriber(v); handleToggle('notifyOnSubscriber', v); }}
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-xl border border-black/8 bg-[oklch(98%_0_0)] px-4 py-3">
+            <span className="text-sm text-black/70">Weekly digest email</span>
+            <Toggle
+              checked={weeklyDigest}
+              onChange={(v) => { setWeeklyDigest(v); handleToggle('weeklyDigest', v); }}
+            />
+          </div>
         </div>
       </section>
 
@@ -184,13 +190,16 @@ export function SettingsClient({ projects }: { projects: Project[] }) {
               <p className="text-sm font-medium text-red-500">Are you sure?</p>
               <button
                 type="button"
-                onClick={() => {
-                  toast.success('Account deleted');
+                onClick={async () => {
+                  setDeleting(true);
+                  await fetch('/api/me', { method: 'DELETE' }).catch(() => null);
+                  await authClient.signOut();
                   router.push('/');
                 }}
-                className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600"
+                disabled={deleting}
+                className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-60"
               >
-                Yes, delete everything
+                {deleting ? 'Deleting...' : 'Yes, delete everything'}
               </button>
               <button
                 type="button"

@@ -1,7 +1,7 @@
 'use client';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { TimelineAnimation } from '@/components/ui/timeline-animation';
 
@@ -17,6 +17,7 @@ interface Entry {
 interface Project {
   name: string;
   description: string;
+  slug: string;
 }
 
 const TAG_COLORS: Record<string, string> = {
@@ -37,6 +38,14 @@ export function ChangelogClient({
   const timelineRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ projectSlug: project.slug }),
+    }).catch(() => null);
+  }, []);
 
   const handleSubscribe = () => {
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
