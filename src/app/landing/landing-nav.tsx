@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export function LandingNav() {
+export function LandingNav({ isAuthed }: { isAuthed: boolean }) {
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(false);
 
@@ -34,10 +34,10 @@ export function LandingNav() {
           Pricing
         </Link>
         <Link
-          href="/login"
+          href={isAuthed ? '/dashboard' : '/login'}
           className="rounded-lg bg-black px-4 py-1.5 text-sm font-medium text-white hover:bg-black/85 transition-colors"
         >
-          Sign in
+          {isAuthed ? 'Dashboard' : 'Sign in'}
         </Link>
       </div>
 
@@ -77,11 +77,11 @@ export function LandingNav() {
                 Pricing
               </Link>
               <Link
-                href="/login"
+                href={isAuthed ? '/dashboard' : '/login'}
                 onClick={() => setOpen(false)}
                 className="mt-1 rounded-lg bg-black px-3 py-2.5 text-sm font-medium text-white text-center hover:bg-black/85 transition-colors"
               >
-                Sign in
+                {isAuthed ? 'Dashboard' : 'Sign in'}
               </Link>
             </div>
           </motion.div>

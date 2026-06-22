@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Balancer from 'react-wrap-balancer';
 import { TextEffect } from '@/components/motion/text-effect';
 
-export function HeroAnimation() {
+export function HeroAnimation({ isAuthed }: { isAuthed: boolean }) {
   const reduced = useReducedMotion();
 
   return (
@@ -45,10 +45,10 @@ export function HeroAnimation() {
         transition={{ duration: 0.5, delay: 0.78, ease: [0.22, 1, 0.36, 1] }}
       >
         <Link
-          href="/login"
+          href={isAuthed ? '/dashboard' : '/login'}
           className="flex items-center gap-2 rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-black/85 transition-all"
         >
-          Start for free <ArrowRight size={14} />
+          {isAuthed ? 'Go to dashboard' : 'Start for free'} <ArrowRight size={14} />
         </Link>
         <Link
           href="/patchly"

@@ -1,6 +1,7 @@
 import { ArrowRight, Check, Code2, Bell, Globe } from 'lucide-react';
 import Link from 'next/link';
 import Balancer from 'react-wrap-balancer';
+import { getCurrentUser } from '@/lib/queries';
 import { HeroAnimation } from './landing/hero-animation';
 import { LandingNav } from './landing/landing-nav';
 import { MarqueeStrip } from './landing/marquee-strip';
@@ -192,14 +193,17 @@ const FEATURES = [
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await getCurrentUser();
+  const isAuthed = !!user;
+
   return (
     <div className="relative min-h-screen bg-white">
-      <LandingNav />
+      <LandingNav isAuthed={isAuthed} />
 
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-5 pt-16 pb-16 text-center sm:px-8 sm:pt-24">
-        <HeroAnimation />
+        <HeroAnimation isAuthed={isAuthed} />
       </section>
 
       {/* Product preview */}
@@ -395,10 +399,10 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link
-                href="/login"
+                href={isAuthed ? '/dashboard' : '/login'}
                 className="block w-full rounded-xl border border-black/12 py-2.5 text-center text-sm text-black/50 hover:bg-black/3 hover:text-black/70 transition-colors"
               >
-                Get started
+                {isAuthed ? 'Go to dashboard' : 'Get started'}
               </Link>
             </div>
           </RevealWrapper>
@@ -432,10 +436,10 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link
-                href="/login"
+                href={isAuthed ? '/dashboard' : '/login'}
                 className="block w-full rounded-xl bg-white py-2.5 text-center text-sm font-semibold text-black hover:bg-white/90 transition-all"
               >
-                Get started
+                {isAuthed ? 'Go to dashboard' : 'Get started'}
               </Link>
             </div>
           </RevealWrapper>
@@ -454,10 +458,10 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/login"
+              href={isAuthed ? '/dashboard' : '/login'}
               className="flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-semibold text-black hover:bg-white/92 transition-all"
             >
-              Get started free <ArrowRight size={14} />
+              {isAuthed ? 'Go to dashboard' : 'Get started free'} <ArrowRight size={14} />
             </Link>
             <Link
               href="/patchly"
