@@ -54,7 +54,7 @@ export function ProfileDialog({
               </Dialog.Overlay>
               <Dialog.Content asChild>
                 <motion.div
-                  className="fixed left-1/2 top-[18%] z-50 w-full max-w-sm -translate-x-1/2 rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)] outline-none"
+                  className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 max-h-[90vh] overflow-y-auto rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)] outline-none"
                   initial={{ opacity: 0, y: -12, scale: 0.97 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.97 }}
