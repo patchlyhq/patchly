@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Archivo, Geist_Mono } from 'next/font/google';
+import { CookieBanner } from '@/components/ui/cookie-banner';
 import { Toaster } from 'sonner';
 import './globals.css';
 
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en" className={`${archivo.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] antialiased">
         {children}
+        <CookieBanner />
         <Toaster
           position="bottom-right"
           toastOptions={{
