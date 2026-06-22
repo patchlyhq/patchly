@@ -67,6 +67,7 @@ export const projects = pgTable('projects', {
   name: text('name').notNull(),
   slug: text('slug').notNull().unique(),
   description: text('description'),
+  githubWebhookSecret: text('github_webhook_secret'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 

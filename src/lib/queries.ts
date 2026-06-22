@@ -76,6 +76,20 @@ export type SubscriberStats = {
   thisMonth: number;
 };
 
+export type ProjectWithSecret = {
+  id: string;
+  slug: string;
+  name: string;
+  githubWebhookSecret: string | null;
+};
+
+export async function getProjectsWithSecrets(userId: string): Promise<ProjectWithSecret[]> {
+  return db
+    .select({ id: projects.id, slug: projects.slug, name: projects.name, githubWebhookSecret: projects.githubWebhookSecret })
+    .from(projects)
+    .where(eq(projects.userId, userId));
+}
+
 export async function getSubscriberStats(userId: string): Promise<SubscriberStats> {
   const rows = await getSubscribers(userId);
   const now = new Date();
